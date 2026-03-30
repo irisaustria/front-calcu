@@ -2,7 +2,7 @@ window.solveLaplace = async function () {
   const expression = document.getElementById("lap-ft").value.trim();
   const mode = document.getElementById("lap-mode").value;
 
-  const response = await fetch("https://back-calcu-but6.onrender.com", {
+  const response = await fetch("https://back-calcu-but6.onrender.com/solve", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({
