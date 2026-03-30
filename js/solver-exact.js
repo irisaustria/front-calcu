@@ -2,7 +2,7 @@ window.solveExact = async function () {
   const M = document.getElementById("exa-M").value.trim();
   const N = document.getElementById("exa-N").value.trim();
 
-  const response = await fetch("https://back-calcu-but6.onrender.com", {
+  const response = await fetch("https://back-calcu-but6.onrender.com/solve", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({
