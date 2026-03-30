@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Calculadora EDO y Laplace — UPTap</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600&family=Syne:wght@400;600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet"/>
+
+  <script>
+    window.MathJax = {
+      tex: { inlineMath: [['$','$'],['\\(','\\)']] },
+      svg: { fontCache: 'global' }
+    };
+  </script>
+  <script defer src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js"></script>
+
+  <link rel="stylesheet" href="css/style.css"/>
+</head>
+<body>
+
+  <header class="topbar">
+    <div class="topbar-inner">
+      <div class="brand">
+        <div class="brand-logo">ℒ</div>
+        <div class="brand-copy">
+          <h1>Calculadora de EDO y Transformadas de Laplace</h1>
+          <p>Universidad Politécnica de Tapachula</p>
+        </div>
+      </div>
+
+      <div class="topbar-badge">
+        Matemáticas
+      </div>
+    </div>
+  </header>
+
+  <main class="app-shell">
+    <!-- SIDEBAR MÉTODOS -->
+    <aside class="sidebar">
+      <div class="sidebar-card">
+        <h2 class="sidebar-title">Métodos</h2>
+
+        <div class="method-list">
+          <button class="nav-btn active" data-method="sep" type="button">
+            <span class="nav-icon">∫</span>
+            <span class="nav-text">
+              <strong>Separación</strong>
+              <small>de variables</small>
+            </span>
+          </button>
+
+          <button class="nav-btn" data-method="exa" type="button">
+            <span class="nav-icon">∂</span>
+            <span class="nav-text">
+              <strong>Exactas</strong>
+              <small>M dx + N dy = 0</small>
+            </span>
+          </button>
+
+          <button class="nav-btn" data-method="int" type="button">
+            <span class="nav-icon">μ</span>
+            <span class="nav-text">
+              <strong>Factor integrante</strong>
+              <small>μ(x) o μ(y)</small>
+            </span>
+          </button>
+
+          <button class="nav-btn" data-method="lin" type="button">
+            <span class="nav-icon">λ</span>
+            <span class="nav-text">
+              <strong>Ecuación lineal</strong>
+              <small>y' + P(x)y = Q(x)</small>
+            </span>
+          </button>
+
+          <button class="nav-btn" data-method="lap" type="button">
+            <span class="nav-icon">ℒ</span>
+            <span class="nav-text">
+              <strong>Laplace</strong>
+              <small>directa e inversa</small>
+            </span>
+          </button>
+        </div>
+      </div>
+    </aside>
+
+    <!-- ENTRADA -->
+    <section class="workspace-left">
+      <div class="panel">
+        <div class="panel-header">
+          <h2 class="panel-title">Datos de entrada</h2>
+          <div id="statusPill" class="status-pill warn">Listo</div>
+        </div>
+
+        <!-- SEPARABLES -->
+        <div id="panel-sep" class="method-panel active">
+          <div class="method-desc">
+            <p>Resuelve ecuaciones de la forma \(\dfrac{dy}{dx}=f(x)g(y)\).</p>
+          </div>
+
+          <div class="field-group">
+            <label class="field-label" for="sep-fx">f(x)</label>
+            <input id="sep-fx" class="field-input" placeholder="Ej: 1/(1+x^2)"/>
+          </div>
+
+          <div class="field-group">
+            <label class="field-label" for="sep-gy">g(y)</label>
+            <input id="sep-gy" class="field-input" placeholder="Ej: 1+y^2"/>
+          </div>
+
+          <div class="examples-box">
+            <span class="ex-label">Ejemplos</span>
+            <div class="examples-row">
+              <button class="chip" data-ex="sep1" type="button">x·y</button>
+              <button class="chip" data-ex="sep2" type="button">(1+y²)/(1+x²)</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- EXACTAS -->
+        <div id="panel-exa" class="method-panel">
+          <div class="method-desc">
+            <p>Resuelve ecuaciones exactas de la forma \(M(x,y)\,dx+N(x,y)\,dy=0\).</p>
+          </div>
+
+          <div class="field-group">
+            <label class="field-label" for="exa-M">M(x,y)</label>
+            <input id="exa-M" class="field-input" placeholder="Ej: 2*x*y+3"/>
+          </div>
+
+          <div class="field-group">
+            <label class="field-label" for="exa-N">N(x,y)</label>
+            <input id="exa-N" class="field-input" placeholder="Ej: x^2+4*y"/>
+          </div>
+
+          <div class="examples-box">
+            <span class="ex-label">Ejemplos</span>
+            <div class="examples-row">
+              <button class="chip" data-ex="exa1" type="button">2xy+3 | x²+4y</button>
+              <button class="chip" data-ex="exa2" type="button">ycos(x)+2x | sin(x)+2y</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- FACTOR INTEGRANTE -->
+        <div id="panel-int" class="method-panel">
+          <div class="method-desc">
+            <p>Busca un factor integrante \(\mu(x)\) o \(\mu(y)\) para volver exacta la ecuación.</p>
+          </div>
+
+          <div class="field-group">
+            <label class="field-label" for="int-M">M(x,y)</label>
+            <input id="int-M" class="field-input" placeholder="Ej: y"/>
+          </div>
+
+          <div class="field-group">
+            <label class="field-label" for="int-N">N(x,y)</label>
+            <input id="int-N" class="field-input" placeholder="Ej: 2*x"/>
+          </div>
+
+          <div class="examples-box">
+            <span class="ex-label">Ejemplos</span>
+            <div class="examples-row">
+              <button class="chip" data-ex="int1" type="button">y | 2x</button>
+              <button class="chip" data-ex="int2" type="button">xy | x²</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- LINEALES -->
+        <div id="panel-lin" class="method-panel">
+          <div class="method-desc">
+            <p>Resuelve ecuaciones de la forma \(\dfrac{dy}{dx}+P(x)y=Q(x)\).</p>
+          </div>
+
+          <div class="field-group">
+            <label class="field-label" for="lin-P">P(x)</label>
+            <input id="lin-P" class="field-input" placeholder="Ej: 2/x"/>
+          </div>
+
+          <div class="field-group">
+            <label class="field-label" for="lin-Q">Q(x)</label>
+            <input id="lin-Q" class="field-input" placeholder="Ej: x^3"/>
+          </div>
+
+          <div class="examples-box">
+            <span class="ex-label">Ejemplos</span>
+            <div class="examples-row">
+              <button class="chip" data-ex="lin1" type="button">2 , 4</button>
+              <button class="chip" data-ex="lin2" type="button">2/x , x³</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- LAPLACE -->
+        <div id="panel-lap" class="method-panel">
+          <div class="method-desc">
+            <p>Calcula transformada de Laplace directa o inversa.</p>
+          </div>
+
+          <div class="field-group">
+            <label class="field-label" for="lap-ft">Expresión</label>
+            <input id="lap-ft" class="field-input" placeholder="Ej: exp(2*t)*sin(3*t)"/>
+          </div>
+
+          <div class="field-group">
+            <label class="field-label" for="lap-mode">Operación</label>
+            <select id="lap-mode" class="field-input">
+              <option value="forward">Laplace directa: ℒ{f(t)}</option>
+              <option value="inverse">Laplace inversa: ℒ⁻¹{F(s)}</option>
+            </select>
+          </div>
+
+          <div class="examples-box">
+            <span class="ex-label">Ejemplos</span>
+            <div class="examples-row">
+              <button class="chip" data-ex="lap1" type="button">t²e^(3t)</button>
+              <button class="chip" data-ex="lap2" type="button">e^(-t)sin(2t)</button>
+              <button class="chip" data-ex="lap3" type="button">1/(s²+4)</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="action-bar">
+          <button id="btn-solve" class="btn-primary" type="button">Resolver</button>
+          <button id="btn-clear" class="btn-secondary" type="button">Limpiar</button>
+          <button id="btn-copy" class="btn-secondary" type="button">Copiar resultado</button>
+        </div>
+      </div>
+
+      <div class="panel guide-panel">
+        <div class="panel-header">
+          <h2 class="panel-title small-title">Guía rápida</h2>
+        </div>
+
+        <div class="help-grid compact-grid">
+          <div><code>2*x</code> multiplicación</div>
+          <div><code>x^2</code> potencia</div>
+          <div><code>(x+1)/(x-1)</code> fracción</div>
+          <div><code>sqrt(x)</code> raíz</div>
+          <div><code>exp(2*t)</code> exponencial</div>
+          <div><code>sin(x)</code>, <code>cos(x)</code></div>
+          <div><code>ln(x)</code> o <code>log(x)</code></div>
+          <div><code>pi</code> para π</div>
+          <div><code>x</code> variable independiente</div>
+          <div><code>y</code> variable dependiente</div>
+          <div><code>t</code> variable de tiempo</div>
+          <div><code>s</code> dominio de Laplace</div>
+        </div>
+
+        <div class="guide-warning">
+          Escribe <code>2*x</code> y <code>x*y</code>, no <code>2x</code> ni <code>xy</code>.
+        </div>
+      </div>
+    </section>
+
+    <!-- PROCEDIMIENTO -->
+    <section class="workspace-right">
+      <div class="panel panel-output">
+        <div class="panel-header">
+          <h2 class="panel-title">Procedimiento</h2>
+          <div id="modePill" class="mode-pill">Separación de Variables</div>
+        </div>
+
+        <div id="output-area" class="output-area">
+          <div class="output-placeholder">
+            <div class="placeholder-icon">∫</div>
+            <p>Selecciona un método, escribe los datos y presiona <strong>Resolver</strong>.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <span>Universidad Politécnica de Tapachula</span>
+    <span>Calculadora EDO y Laplace © 2025</span>
+  </footer>
+
+  <script src="js/ui.js"></script>
+  <script src="js/solver-separable.js"></script>
+  <script src="js/solver-exact.js"></script>
+  <script src="js/solver-integrating.js"></script>
+  <script src="js/solver-linear.js"></script>
+  <script src="js/solver-laplace.js"></script>
+</body>
+</html>
